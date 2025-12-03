@@ -9,6 +9,7 @@ import { SimpleClaudeAgentSDKClient } from '@claude-agent-kit/server'
 import { WebSocketHandler } from '@claude-agent-kit/websocket'
 import { registerApiRoutes } from './api'
 import { registerRoutes } from './routes'
+// import { loadClaudeConfig } from './load-claude-config'
 
 export interface CreateServerOptions {
   root?: string
@@ -16,16 +17,43 @@ export interface CreateServerOptions {
 
 export async function createServer(options: CreateServerOptions = {}) {
   const root = options.root ?? process.cwd()
+  const agentDir = path.resolve(root, 'agent')
+  // const claudeDir = path.join(agentDir, '.claude')
   const isProduction = process.env.NODE_ENV === 'production'
   const base = process.env.BASE ?? '/'
-
   const app = express()
   const httpServer = createHttpServer(app)
   const webSocketServer = new WebSocketServer({ server: httpServer })
   const sdkClient = new SimpleClaudeAgentSDKClient()
-  const webSocketHandler = new WebSocketHandler(sdkClient, {
+
+  // Load custom agents from .claude directory
+  // const claudeConfig = await loadClaudeConfig(claudeDir)
+
+  const sessionOptions = {
     thinkingLevel: 'default_on',
-  })
+    cwd: agentDir,
+    settingSources: ['project'],
+    // agents: claudeConfig.agents,
+
+    allowedTools: [
+      'Task',
+      'Bash',
+      'Glob',
+      'Grep',
+      'LS',
+      'ExitPlanMode',
+      'Read',
+      'Edit',
+      'MultiEdit',
+      'Write',
+      'NotebookEdit',
+      'TodoWrite',
+      'BashOutput',
+      'KillBash',
+      'Skill'
+    ]
+  }
+  const webSocketHandler = new WebSocketHandler(sdkClient, sessionOptions)
 
   webSocketServer.on('connection', (ws) => {
     void webSocketHandler.onOpen(ws)
