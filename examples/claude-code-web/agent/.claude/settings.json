@@ -1,0 +1,24 @@
+{
+    "env": {
+    "ANTHROPIC_AUTH_TOKEN": "",
+    "ANTHROPIC_BASE_URL": "",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
+    },
+    "permissions": {
+      "allow": [
+        "Bash",
+        "Write",
+        "Edit",
+        "Read",
+        "Grep",
+        "Glob"
+      ],
+      "deny": [
+      ],
+      "ask": [
+        "Bash(rm -rf :*)",
+        "Bash(sudo :*)"
+      ]
+    }
+  }
+  

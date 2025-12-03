@@ -11,6 +11,11 @@ export class SessionManager {
 
   /** List of known sessions, including inactive ones. */
   private sessionsList: Session[] = [];
+  private defaultOptions?: Partial<SessionSDKOptions>;
+
+  constructor(defaultOptions?: Partial<SessionSDKOptions>) {
+    this.defaultOptions = defaultOptions;
+  }
 
   get sessions(): Session[] {
     return this.sessionsList;
@@ -38,6 +43,9 @@ export class SessionManager {
 
   createSession(sdkClient: IClaudeAgentSDKClient): Session {
     const session = new Session(sdkClient);
+    if (this.defaultOptions) {
+      session.setSDKOptions(this.defaultOptions);
+    }
     this.sessionsList.push(session);
     return session;
   }

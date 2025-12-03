@@ -12,7 +12,7 @@ import { WebSocketSessionClient } from "./websocket-session-client";
 
 export class WebSocketHandler {
   private clients: Map<WebSocket, WebSocketSessionClient> = new Map();
-  private sessionManager = new SessionManager();
+  private sessionManager: SessionManager;
 
   sdkClient: IClaudeAgentSDKClient;
   options: SessionSDKOptions;
@@ -20,6 +20,7 @@ export class WebSocketHandler {
   constructor(sdkClient: IClaudeAgentSDKClient, options: SessionSDKOptions) {
     this.sdkClient = sdkClient;
     this.options = options;
+    this.sessionManager = new SessionManager(options);
   }
 
   private send(ws: WebSocket, payload: Record<string, unknown>): void {
